@@ -1,0 +1,57 @@
+Cover: 0
+Debug: false
+EnableIPChangeNotification: false
+EnablePlainIPInNotification: false
+GRPCHost: 51.81.211.13
+GRPCPort: 5555
+HTTPPort: 80
+IPChangeNotificationTag: default
+IgnoredIPNotification: ""
+IgnoredIPNotificationServerIDs: {}
+Language: zh-CN
+Location: Asia/Shanghai
+Oauth2:
+  Admin: openmjj
+  ClientID: e9e99260a03a49f6404d
+  ClientSecret: 4e9f2b9507d87a951423bb2792c37231e0911b52
+  Endpoint: ""
+  Type: github
+ProxyGRPCPort: 0
+Site:
+  Brand: 秋水长天
+  CookieName: nezha-dashboard
+  CustomCode: "<style>\r\n\r\n/* 屏幕适配 */\r\n@media (min-width: 1024px)\r\n.mdui-container
+    {\r\n    width: 100%;\r\n}\r\n@media (min-width: 600px)\r\n.mdui-container {\r\n
+    \   width: 94%;\r\n}\r\n.mdui-container {\r\n    width: 96%;\r\n    max-width:
+    1800px;\r\n}\r\n/* 背景图片 */\r\nbody {\r\n    content: \" \" !important;\r\n    background:
+    fixed !important;\r\n    z-index: -1 !important;\r\n    top: 0 !important;\r\n
+    \   right: 0 !important;\r\n    bottom: 0 !important;\r\n    left: 0 !important;\r\n
+    \   background-position: top !important;\r\n    background-repeat: no-repeat !important;\r\n
+    \   background-size: cover !important;\r\n    background-image: url(https://api.1314.cool/bingimg)
+    !important;\r\n    font-family: Arial,Helvetica,sans-serif !important;\r\n}\r\n\r\n/*
+    小卡片 */\r\n.mdui-card{\r\n\r\n   width: 210px; /* 设置卡片的宽度 */\r\n    height: 200px;
+    /* 设置卡片的高度 */\r\n    transform: scale(0.8);\r\n    border-radius: 10px !important;\r\n
+    \   background-color: #fafafaa3 !important;\r\n}\r\n.mdui-col{\r\n    opacity:0.9\r\n}\r\n.mdui-table{\r\n
+    \   border-radius: 10px !important;\r\n    background-color: #fafafaa3 !important;\r\n}\r\n/*
+    版权 */\r\n.ui.inverted.segment, .ui.primary.inverted.segment {\r\n    color: #000
+    !important;\r\n    font-weight: bold !important;\r\n    background-color: #fafafaa3
+    !important;\r\n}\r\n\r\n</style>\r\n<style>\r\n\t.mdui-table td, .mdui-table th{padding:
+    6px;}\r\n\t.progress{width: 10%;min-width: 75px;}\r\n\t.progress-text{font-size:
+    16px;font-weight: 800;position: relative;top: 4px;left: 6px;}\r\n\t.offline st,.offline
+    at,.offline gt,.offline .progress-text{color: grey;}\r\n\ta{text-decoration:none;color:#333;}.mdui-theme-layout-dark
+    a{color:#fff;}\r\n\r\n  </style>\r\n<style>\r\n.mdui-appbar{box-shadow:0 -1px
+    10px 0 rgb(32 33 36 / 28%)}\r\n.mdui-card,.mdui-btn-raised,.mdui-panel-item{box-shadow:0
+    1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);}\r\n.mdui-drawer{box-shadow:-1px
+    10px 10px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);}\r\nfooter{box-shadow:5px
+    0px 5px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);}\r\nst{font-weight:600;color:#475bca;}\r\nat{font-weight:600;color:#FF4081;}\r\ngt{font-weight:600;color:#00C853;}\r\nyt{font-weight:600;color:#ffbb00;}\r\n\r\n\r\n.mdui-theme-layout-dark
+    st{color:#9aa9ff;}\r\n.mdui-theme-layout-dark at{color:#f7a4b9;}\r\n.mt{margin-top:15px;}\r\n.mt-s{margin-top:3px;}\r\n.mdui-card
+    ul.mdui-list{padding-left: 0;}\r\n.text{font-size:20px;}\r\n.text_s{font-size:17px;}\r\n.mdui-switch{height:20px;line-height:20px;}\r\n.stop{background:#b6b6b6;}.stop
+    td{color:#fff;font-weight:bold;}\r\n.ccp:hover,.poh:hover{cursor: pointer;}\r\n\r\n.mdui-drawer,
+    footer{\r\n    /* background-color: #fdfdfdda; */\r\n    backdrop-filter: blur(15px)
+    brightness(110%);\r\n}\r\n.mdui-card{\r\n    border-radius: 6px;\r\n    backdrop-filter:blur(7px);\r\n
+    \   /* background-color: #ffffff8a; */\r\n}\r\n.btn{\r\n    border-radius: 5px;\r\n
+    \   font-weight: bold;font-size: 15px;\r\n}\r\n\r\n</style>"
+  DashboardTheme: default
+  Theme: mdui
+  ViewPassword: ""
+TLS: false

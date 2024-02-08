@@ -1,0 +1,149 @@
+{{define "theme-mdui/service"}}
+<!doctype html>
+<html lang="{{.Conf.Language}}">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>{{.Title}}</title>
+  <link rel="shortcut icon" type="image/png" href="/static/logo.svg?v20210804" />
+
+  <!-- MDUI CSS -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/mdui/1.0.2/css/mdui.min.css"/>
+  <link rel="stylesheet" href="/static/theme-mdui/mdui.css" type="text/css">
+  <link rel="stylesheet" href="styles.css">
+  {{if ts .CustomCode}}
+  {{.CustomCode|safe}}
+  {{end}}
+  
+  <style>
+    /* 直接在内部CSS中定义日期格式化规则 */
+    .date-cell::before {
+      /* 使用CSS伪元素::before来修改日期格式 */
+      content: "2023-10-01"; /* 将日期格式从原始格式 "10/01/2023 08:00:00" 修改为 "2023-10-01" */
+      /* 如果您希望文本居中对齐，请添加以下样式 */
+      text-align: center;
+      display: block;
+      margin: auto;
+    }
+  </style>
+  
+</head>
+
+<body>
+
+{{template "theme-mdui/menu" .}}
+
+  <!-- Container -->
+  <div id="container" class="mdui-container mdui-m-t-1">
+    <div class="mdui-table-fluid">
+      <table class="mdui-table mdui-table-hoverable">
+        <thead>
+          <tr>
+            <th class="mdui-text-center">{{tr "Name"}}</th>
+            <th class="mdui-text-center" mdui-tooltip="{content: 'The status of last 30 days', position: 'top'}">{{tr "Availability"}}</th>
+            <th class="mdui-text-center">{{tr "30DaysOnline"}}</th>
+            <th class="mdui-text-center">{{tr "Status"}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range $service := .Services}}
+          <tr>
+            <td class="mdui-text-center"><strong>{{$service.Monitor.Name}}</strong></td>
+            <td class="mdui-text-center">{{$service.TotalUptime|float32f}}%</td>
+            <td>
+              {{range $i,$d := $service.Delay}}
+                {{$percent := (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}}
+                {{if eq $percent 0.0}}
+                <i class="mdui-icon material-icons" mdui-tooltip="{content: '{{dayBefore $i}},{{tr "Availability"}}:{{float32f (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}}%,{{tr "AverageLatency"}}:{{float32f $d}}ms'}">favorite_border</i>
+                {{else if ge $percent 95.0}}
+                <i class="mdui-icon material-icons mdui-text-color-red-a700" mdui-tooltip="{position: 'top', content: '{{dayBefore $i}},{{tr "Availability"}}:{{float32f (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}}%,{{tr "AverageLatency"}}:{{float32f $d}}ms'}">favorite</i>
+                {{else if ge $percent 80.0}}
+                <i class="mdui-icon material-icons mdui-text-color-orange" mdui-tooltip="{content: '{{dayBefore $i}},{{tr "Availability"}}:{{float32f (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}}%,{{tr "AverageLatency"}}:{{float32f $d}}ms'}">favorite</i>
+                {{else}}
+                <i class="mdui-icon material-icons mdui-text-color-black" mdui-tooltip="{content: '{{dayBefore $i}},{{tr "Availability"}}:{{float32f (div (index $service.Up $i) (add (index $service.Up $i) (index $service.Down $i)))}}%,{{tr "AverageLatency"}}:{{float32f $d}}ms'}">favorite</i>
+                {{end}}
+              {{end}}
+            </td>
+            <td class="mdui-text-center">
+              {{$percent := (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}
+              {{if eq $percent 0.0}}
+              <i class="mdui-icon material-icons mdui-text-color-black">sentiment_neutral</i>
+              <p>{{statusName (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}</p>
+              {{else if ge $percent 95.0}}
+              <div class="mdui-spinner mdui-spinner-colorful"></div>
+              <p>{{statusName (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}</p>
+              {{else if ge $percent 80.0}}
+              <i class="mdui-icon material-icons mdui-text-color-orange">sentiment_dissatisfied</i>
+              <p>{{statusName (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}</p>
+              {{else}}
+              <i class="mdui-icon material-icons mdui-text-color-red-a700">sentiment_very_dissatisfied</i>
+              <p>{{statusName (divU64 $service.CurrentUp (addU64 $service.CurrentUp $service.CurrentDown))}}</p>
+              {{end}}
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+
+    {{if .CycleTransferStats}}
+    <h2 class="mdui-m-t-5 mdui-text-center">{{tr "CycleTransferStats"}}</h2>
+    <div class="mdui-table-fluid">
+      <table class="mdui-table mdui-table-hoverable">
+        <thead>
+          <tr>
+            <th class="mdui-text-center">ID</th>
+            <th class="mdui-text-center">{{tr "Rules"}}</th>
+            <th class="mdui-text-center">{{tr "Server"}}</th>
+            <th class="mdui-text-center">{{tr "CurrentUsage"}}</th>
+            <th class='mdui-text-center' style='padding: 0px 31px 0px 31px;'>{{tr "Transleft"}}</th>
+            <th class="mdui-text-center">{{tr "From"}}</th>
+            <th class="mdui-text-center">{{tr "To"}}</th>
+            <th class="mdui-text-center">MAX</th>
+            <th class="mdui-text-center">{{tr "NextCheck"}}</th>
+            <th class="mdui-text-center">{{tr "CurrentUsage"}}</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          {{range $id, $stats := .CycleTransferStats}}
+          {{range $innerId, $transfer := $stats.Transfer}}
+          {{$TransLeftPercent := TransLeftPercent (UintToFloat $transfer) (UintToFloat $stats.Max)}}
+          <tr>
+            <td class="mdui-text-center">{{$id}}</td>
+            <td class="mdui-text-center">{{$stats.Name}}</td>
+            <td class="mdui-text-center">{{index $stats.ServerName $innerId}}</td>
+            <td class="mdui-text-center">{{$transfer|bf}}</td>
+            <td class="mdui-text-center">{{TransLeft $stats.Max $transfer}} / {{$TransLeftPercent}} %</td>
+            <td class="mdui-text-center">{{$stats.From.Format "2006-01-02"}}</td>
+            <td class="mdui-text-center">{{$stats.To.Format "2006-01-02"}}</td>
+            <td class="mdui-text-center">{{$stats.Max|bf}}</td>
+            <td class="mdui-text-center">{{(index $stats.NextUpdate $innerId)|sft}}</td>
+            <td class="mdui-text-center">{{$transfer|bf}}</td>
+            
+          </tr>
+          {{end}}
+          {{end}}
+        </tbody>
+      </table>
+    </div>
+    {{end}}
+
+  </div>
+
+{{template "theme-mdui/footer" .}}
+
+  <script src="/static/theme-mdui/mdui.js"></script>
+  <script src="https://cdn.staticfile.org/mdui/1.0.2/js/mdui.min.js"></script>
+  <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.staticfile.org/vue/2.6.14/vue.min.js"></script>
+  <script>
+    var container=document.querySelector("#container");
+    container.style.minHeight=window.innerHeight-document.body.clientHeight+container.clientHeight+'px';
+    mdui.mutation();
+</script>
+
+</body>
+</html>
+{{end}}
