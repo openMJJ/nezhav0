@@ -6,8 +6,8 @@ username="openmjj"
 token="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"
 
 # 备份文件名及路径
-backup_dir="/usr/home/serv0002/nezhapanel"
-backup_file="/usr/home/serv0002/Auto_backup_nezha_$(date +%Y%m%d%H%M).tar.gz"
+backup_dir="/usr/home/openmjj/nezhapanel"
+backup_file="/usr/home/openmjj/Auto_backup_nezha_$(date +%Y%m%d%H%M).tar.gz"
 
 # 创建备份文件
 tar -czf ${backup_file} -C ${backup_dir} .
@@ -24,7 +24,7 @@ cd repo || exit
 cp ${backup_file} .
 
 # 删除超过7天的备份文件
-find . -name "Auto_nezha_backup_*.tar.gz" -mtime +7 -exec rm {} \;
+find . -name "Auto_backup_nezha_*.tar.gz" -mtime +7 -exec rm {} \;
 
 # 添加、提交和推送更改
 git add .
