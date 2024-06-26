@@ -1,1 +1,22 @@
+name: Scheduled Task
 
+on:
+  schedule:
+    # Runs at 00:00 UTC every day
+    - cron: '0 0 * * *'
+
+jobs:
+  execute-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: Execute Bash script
+      run: |
+        chmod +x ./scripts/serv00back.sh
+        ./scripts/serv00back.sh
