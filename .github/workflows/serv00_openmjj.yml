@@ -1,4 +1,4 @@
-name: serv00backk
+name: serv00openmjj_nezha
 
 on:
   schedule:
@@ -19,5 +19,5 @@ jobs:
 
     - name: Execute Bash script
       run: |
-        chmod +x ./scripts/serv00back.sh
-        ./scripts/serv00back.sh
+        chmod +x ./scripts/serv00nezha.sh
+        ./scripts/serv00nezha.sh
