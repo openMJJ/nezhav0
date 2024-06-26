@@ -1,4 +1,4 @@
-name: Scheduled Task
+name: serv00back
 
 on:
   schedule:
@@ -20,3 +20,4 @@ jobs:
       run: |
         chmod +x ./scripts/serv00back.sh
         ./scripts/serv00back.sh
+
