@@ -6,6 +6,7 @@ declare -A SERVERS=(
     ["server2"]="open01@s4.serv00.com"
     ["server3"]="serv0001@s4.serv00.com"
     ["server4"]="serv0002@s4.serv00.com"
+    ["server5"]="openmjj@s4.serv00.com"
     # 可以在这里添加更多服务器
     # ["server2"]="user@server.com"
 )
