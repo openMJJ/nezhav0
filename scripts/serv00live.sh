@@ -16,48 +16,36 @@ declare -A SERVERS=(
 PASSWORD="Tss@19740522"
 
 # pm2_resurrect_and_restart.sh 脚本内容
-create_pm2_script() {
-    local username=$1
-    cat <<EOF
+PM2_SCRIPT=$(cat <<'EOF'
 #!/bin/bash
 
-# PM2 binary path based on username
-PM2_BIN="/home/${username}/.npm-global/bin/pm2"
-
-if [ ! -x "\$PM2_BIN" ]; then
-    echo "pm2 not found or not executable at \$PM2_BIN"
-    exit 1
-fi
+# 获取当前用户的 home 目录
+HOME_DIR=$(eval echo ~$USER)
 
 # Resurrect PM2 processes
-\$PM2_BIN resurrect
+$HOME_DIR/.npm-global/bin/pm2 resurrect
 
 # Check for stopped or errored processes and restart them
-\$PM2_BIN list | grep -E 'stopped|errored' | awk '{print \$2}' | while read id; do
-    \$PM2_BIN restart \$id
+$HOME_DIR/.npm-global/bin/pm2 list | grep -E 'stopped|errored' | awk '{print $2}' | while read id; do
+    $HOME_DIR/.npm-global/bin/pm2 restart $id
 done
 EOF
-}
+)
 
-# 遍历所有服务器，创建并执行脚本
-for server in "${!SERVERS[@]}"; do
-    username=${SERVERS[$server]%%@*}
-    pm2_script=$(create_pm2_script $username)
+# 遍历服务器并执行脚本
+for server_key in "${!SERVERS[@]}"; do
+    server="${SERVERS[$server_key]}"
+    echo "Logging into $server"
 
-    echo "正在连接 ${server} (${SERVERS[$server]})..."
-    
-    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no "${SERVERS[$server]}" "
-        echo '正在执行脚本内容：'
-        echo '$pm2_script'
-        echo '$pm2_script' > ~/pm2_resurrect_and_restart.sh
-        chmod +x ~/pm2_resurrect_and_restart.sh
-        echo '脚本内容写入完成，开始执行脚本...'
-        ~/pm2_resurrect_and_restart.sh
-    "
+    # 将 pm2_script 内容作为临时脚本传输到远程服务器
+    echo "Creating temporary script on $server"
+    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "echo \"$PM2_SCRIPT\" > ~/pm2_temp_script.sh && chmod +x ~/pm2_temp_script.sh"
 
-    if [ $? -eq 0 ]; then
-        echo "${server} 脚本执行成功"
-    else
-        echo "${server} 脚本执行失败"
-    fi
+    # 执行临时脚本
+    echo "Executing temporary script on $server"
+    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "bash -c '~/pm2_temp_script.sh'"
+
+    # 删除临时脚本
+    echo "Deleting temporary script on $server"
+    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "rm ~/pm2_temp_script.sh"
 done
