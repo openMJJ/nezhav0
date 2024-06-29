@@ -23,11 +23,11 @@ PM2_SCRIPT=$(cat <<'EOF'
 HOME_DIR=$(eval echo ~$USER)
 
 # Resurrect PM2 processes
-$HOME_DIR/.npm-global/bin/pm2 resurrect
+~/.npm-global/bin/pm2 resurrect
 
 # Check for stopped or errored processes and restart them
-$HOME_DIR/.npm-global/bin/pm2 list | grep -E 'stopped|errored' | awk '{print $2}' | while read id; do
-    $HOME_DIR/.npm-global/bin/pm2 restart $id
+~/.npm-global/bin/pm2 list | grep -E 'stopped|errored' | awk '{print $2}' | while read id; do
+    ~/.npm-global/bin/pm2 restart $id
 done
 EOF
 )
