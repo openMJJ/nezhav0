@@ -16,35 +16,37 @@ declare -A SERVERS=(
 PASSWORD="Tss@19740522"
 
 # pm2_resurrect_and_restart.sh 脚本内容
-PM2_SCRIPT=$(cat <<'EOF'
+create_pm2_script() {
+    local username=$1
+    cat <<EOF
 #!/bin/bash
 
-# 获取当前用户的 home 目录
-HOME_DIR=$(eval echo ~$USER)
+# PM2 binary path based on username
+PM2_BIN="/home/${username}/.npm-global/bin/pm2"
 
-# 确定 pm2 的路径
-PM2_BIN=$(which pm2)
-
-if [ -z "$PM2_BIN" ]; then
-    echo "pm2 not found"
+if [ ! -x "\$PM2_BIN" ]; then
+    echo "pm2 not found or not executable at \$PM2_BIN"
     exit 1
 fi
 
 # Resurrect PM2 processes
-$PM2_BIN resurrect
+\$PM2_BIN resurrect
 
 # Check for stopped or errored processes and restart them
-$PM2_BIN list | grep -E 'stopped|errored' | awk '{print $2}' | while read id; do
-    $PM2_BIN restart $id
+\$PM2_BIN list | grep -E 'stopped|errored' | awk '{print \$2}' | while read id; do
+    \$PM2_BIN restart \$id
 done
 EOF
-)
+}
 
 # 遍历所有服务器，创建并执行脚本
 for server in "${!SERVERS[@]}"; do
+    username=${SERVERS[$server]%%@*}
+    pm2_script=$(create_pm2_script $username)
+
     echo "正在连接 ${server} (${SERVERS[$server]})..."
     
-    sshpass -p "$PASSWORD" ssh "${SERVERS[$server]}" "echo '$PM2_SCRIPT' > ~/pm2_resurrect_and_restart.sh && chmod +x ~/pm2_resurrect_and_restart.sh && ~/pm2_resurrect_and_restart.sh"
+    sshpass -p "$PASSWORD" ssh "${SERVERS[$server]}" "echo '$pm2_script' > ~/pm2_resurrect_and_restart.sh && chmod +x ~/pm2_resurrect_and_restart.sh && ~/pm2_resurrect_and_restart.sh"
     
     if [ $? -eq 0 ]; then
         echo "${server} 脚本执行成功"
