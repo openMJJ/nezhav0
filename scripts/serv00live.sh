@@ -22,30 +22,33 @@ PM2_SCRIPT=$(cat <<'EOF'
 # 获取当前用户的 home 目录
 HOME_DIR=$(eval echo ~$USER)
 
+# 确定 pm2 的路径
+PM2_BIN=$(which pm2)
+
+if [ -z "$PM2_BIN" ]; then
+    echo "pm2 not found"
+    exit 1
+fi
+
 # Resurrect PM2 processes
-$HOME_DIR/.npm-global/bin/pm2 resurrect
+$PM2_BIN resurrect
 
 # Check for stopped or errored processes and restart them
-$HOME_DIR/.npm-global/bin/pm2 list | grep -E 'stopped|errored' | awk '{print $2}' | while read id; do
-    $HOME_DIR/.npm-global/bin/pm2 restart $id
+$PM2_BIN list | grep -E 'stopped|errored' | awk '{print $2}' | while read id; do
+    $PM2_BIN restart $id
 done
 EOF
 )
 
-# 遍历服务器并执行脚本
-for server_key in "${!SERVERS[@]}"; do
-    server="${SERVERS[$server_key]}"
-    echo "Logging into $server"
-
-    # 将 pm2_script 内容作为临时脚本传输到远程服务器
-    echo "Creating temporary script on $server"
-    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "echo \"$PM2_SCRIPT\" > ~/pm2_temp_script.sh && chmod +x ~/pm2_temp_script.sh"
-
-    # 执行临时脚本
-    echo "Executing temporary script on $server"
-    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "bash -c '~/pm2_temp_script.sh'"
-
-    # 删除临时脚本
-    echo "Deleting temporary script on $server"
-    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "rm ~/pm2_temp_script.sh"
+# 遍历所有服务器，创建并执行脚本
+for server in "${!SERVERS[@]}"; do
+    echo "正在连接 ${server} (${SERVERS[$server]})..."
+    
+    sshpass -p "$PASSWORD" ssh "${SERVERS[$server]}" "echo '$PM2_SCRIPT' > ~/pm2_resurrect_and_restart.sh && chmod +x ~/pm2_resurrect_and_restart.sh && ~/pm2_resurrect_and_restart.sh"
+    
+    if [ $? -eq 0 ]; then
+        echo "${server} 脚本执行成功"
+    else
+        echo "${server} 脚本执行失败"
+    fi
 done
