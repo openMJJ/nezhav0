@@ -46,8 +46,15 @@ for server in "${!SERVERS[@]}"; do
 
     echo "正在连接 ${server} (${SERVERS[$server]})..."
     
-    sshpass -p "$PASSWORD" ssh "${SERVERS[$server]}" "echo '$pm2_script' > ~/pm2_resurrect_and_restart.sh && chmod +x ~/pm2_resurrect_and_restart.sh && ~/pm2_resurrect_and_restart.sh"
-    
+    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no "${SERVERS[$server]}" "
+        echo '正在执行脚本内容：'
+        echo '$pm2_script'
+        echo '$pm2_script' > ~/pm2_resurrect_and_restart.sh
+        chmod +x ~/pm2_resurrect_and_restart.sh
+        echo '脚本内容写入完成，开始执行脚本...'
+        ~/pm2_resurrect_and_restart.sh
+    "
+
     if [ $? -eq 0 ]; then
         echo "${server} 脚本执行成功"
     else
