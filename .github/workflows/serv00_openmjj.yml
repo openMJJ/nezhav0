@@ -3,7 +3,7 @@ name: serv00openmjj_nezha
 on:
   schedule:
     # Runs at 00:00 UTC every day
-    - cron: '0 * * * *'
+    - cron: '0 0 * * *'
   workflow_dispatch:  # 添加这一行以支持手动触发
 
 jobs:
