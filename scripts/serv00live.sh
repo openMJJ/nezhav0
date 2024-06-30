@@ -9,7 +9,7 @@ declare -A SERVERS=(
     ["server5"]="openmjj@s4.serv00.com"
     ["server6"]="qq56607@s0.serv00.com"
     ["server6"]="serv0004@s4.serv00.com"
-    
+    ["server7"]="serv501@s4.serv00.com"
     # 可以在这里添加更多服务器
     # ["server2"]="user@server.com"
 )
