@@ -52,12 +52,23 @@ cat > ~/pm2_temp_script.sh << 'EOF'
 $PM2_SCRIPT
 EOF
 chmod +x ~/pm2_temp_script.sh
+echo "Executing script on $server"
 bash ~/pm2_temp_script.sh
-if [ $? -ne 0 ]; then
+if [ \$? -ne 0 ]; then
     echo "Script execution failed on $server"
 else
     echo "Script executed successfully on $server"
 fi
+echo "Deleting temporary script on $server"
 rm ~/pm2_temp_script.sh
+exit
 SSH
+
+    # 检查执行结果
+    if [ $? -ne 0 ]; then
+        echo "SSH session to $server failed or script execution failed"
+    else
+        echo "SSH session to $server completed successfully"
+    fi
+
 done
