@@ -26,13 +26,14 @@ HOME_DIR=$(eval echo ~$USER)
 # Resurrect PM2 processes
 ~/.npm-global/bin/pm2 resurrect
 
-# 检查停止或出错的进程并重新启动它们
-echo "$process_info" | tail -n +4 | awk '{print $2,$4}' | while read id status; do
+# 获取当前所有 PM2 进程的信息
+process_info=$(/usr/local/bin/pm2 list)
+
+# 从第四行开始遍历每个进程，检查并重新启动停止或出错的进程
+echo "$process_info" | awk 'NR>2 {print $2, $10}' | while read id status; do
     if [[ "$status" == "stopped" || "$status" == "errored" ]]; then
         ~/.npm-global/bin/pm2 restart "$id"
     fi
-done
-
 
 EOF
 )
