@@ -28,11 +28,10 @@ HOME_DIR=$(eval echo ~$USER)
 # Resurrect PM2 processes
 ~/.npm-global/bin/pm2 resurrect
 
- # 检查停止或出错的进程并重新启动它们
+# 检查停止或出错的进程并重新启动它们
 ~/.npm-global/bin/pm2 jlist | jq -r '.[] | select(.pm2_env.status == "stopped" or .pm2_env.status == "errored") | .pm_id' | while read id; do
     ~/.npm-global/bin/pm2 restart $id
 done
-
 EOF
 )
 
@@ -47,7 +46,14 @@ for server_key in "${!SERVERS[@]}"; do
 
     # 执行临时脚本
     echo "Executing temporary script on $server"
-    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "bash -c '~/pm2_temp_script.sh'"
+    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "bash ~/pm2_temp_script.sh"
+
+    # 检查执行结果
+    if [ $? -ne 0 ]; then
+        echo "Script execution failed on $server"
+    else
+        echo "Script executed successfully on $server"
+    fi
 
     # 删除临时脚本
     echo "Deleting temporary script on $server"
