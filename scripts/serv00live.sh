@@ -32,6 +32,7 @@ HOME_DIR=$(eval echo ~$USER)
 ~/.npm-global/bin/pm2 jlist | jq -r '.[] | select(.pm2_env.status == "stopped" or .pm2_env.status == "errored") | .pm_id' | while read id; do
     ~/.npm-global/bin/pm2 restart $id
 done
+
 EOF
 )
 
