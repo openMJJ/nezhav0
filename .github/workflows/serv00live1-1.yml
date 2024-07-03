@@ -19,5 +19,5 @@ jobs:
 
     - name: Execute Bash script
       run: |
-        chmod +x ./scripts/serv00live.sh
-        ./scripts/serv00live.sh
+        chmod +x ./scripts/serv00live1-1.sh
+        ./scripts/serv00live1-1.sh
