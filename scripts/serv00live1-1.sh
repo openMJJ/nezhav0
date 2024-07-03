@@ -29,9 +29,15 @@ HOME_DIR=$(eval echo ~$USER)
 
 
 # 从第四行开始遍历每个进程，检查并重新启动停止或出错的进程
-~/.npm-global/bin/pm2 jlist | jq -r '.[] | select(.pm2_env.status == "stopped" or .pm2_env.status == "errored") | .pm_id' | while read id; do
-    ~/.npm-global/bin/pm2 restart $id
-done
+~/.npm-global/bin/pm2 jlist                         # 获取PM2进程列表
+| jq -r '.[]                                       # 遍历每个进程
+| select(.pm2_env.status == "stopped"              # 选择状态为 'stopped'
+    or .pm2_env.status == "errored")               # 或者状态为 'errored' 的进程
+| .pm_id'                                          # 输出这些进程的ID
+| while read id; do                                # 读取每个进程ID
+    ~/.npm-global/bin/pm2 restart $id              # 重启对应的进程
+done                                               # 结束循环
+
 
 EOF
 )
