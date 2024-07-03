@@ -46,10 +46,11 @@ for server_key in "${!SERVERS[@]}"; do
     server="${SERVERS[$server_key]}"
     echo "Logging into $server"
 
-    # 将 pm2_script 内容作为临时脚本传输到远程服务器
-    echo "Creating temporary script on $server"
+    # 将 pm2_script 内容作为临时脚本传输到远程服务器并执行
     sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt "$server" <<SSH
-echo "$PM2_SCRIPT" > ~/pm2_temp_script.sh
+cat > ~/pm2_temp_script.sh << 'EOF'
+$PM2_SCRIPT
+EOF
 chmod +x ~/pm2_temp_script.sh
 bash ~/pm2_temp_script.sh
 if [ $? -ne 0 ]; then
