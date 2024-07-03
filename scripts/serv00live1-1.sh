@@ -26,8 +26,6 @@ HOME_DIR=$(eval echo ~$USER)
 # Resurrect PM2 processes
 ~/.npm-global/bin/pm2 resurrect
 
-
-
 # 获取状态为 stopped 或 errored 的进程 ID 并写入临时文件
 ~/.npm-global/bin/pm2 jlist | jq -r '.[] | select(.pm2_env.status == "stopped" or .pm2_env.status == "errored") | .pm_id' > pm2_ids.txt
 
@@ -50,20 +48,15 @@ for server_key in "${!SERVERS[@]}"; do
 
     # 将 pm2_script 内容作为临时脚本传输到远程服务器
     echo "Creating temporary script on $server"
-    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "echo \"$PM2_SCRIPT\" > ~/pm2_temp_script.sh && chmod +x ~/pm2_temp_script.sh"
-
-    # 执行临时脚本
-    echo "Executing temporary script on $server"
-    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "bash ~/pm2_temp_script.sh"
-
-    # 检查执行结果
-    if [ $? -ne 0 ]; then
-        echo "Script execution failed on $server"
-    else
-        echo "Script executed successfully on $server"
-    fi
-
-    # 删除临时脚本
-    echo "Deleting temporary script on $server"
-    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt $server "rm ~/pm2_temp_script.sh"
+    sshpass -p "$PASSWORD" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt "$server" <<SSH
+echo "$PM2_SCRIPT" > ~/pm2_temp_script.sh
+chmod +x ~/pm2_temp_script.sh
+bash ~/pm2_temp_script.sh
+if [ $? -ne 0 ]; then
+    echo "Script execution failed on $server"
+else
+    echo "Script executed successfully on $server"
+fi
+rm ~/pm2_temp_script.sh
+SSH
 done
