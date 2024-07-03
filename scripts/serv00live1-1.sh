@@ -27,7 +27,7 @@ HOME_DIR=$(eval echo ~$USER)
 ~/.npm-global/bin/pm2 resurrect
 
 # 检查停止或出错的进程并重新启动它们
-~/.npm-global/bin/pm2 list | awk '$4 == "stopped" || $4 == "errored" {print $2}' | while read id; do
+~/.npm-global/bin/pm2 list | grep -E 'stopped|errored' | awk '{print $2}' | while read id; do
     ~/.npm-global/bin/pm2 restart $id
 done
 
