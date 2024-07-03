@@ -28,10 +28,10 @@ HOME_DIR=$(eval echo ~$USER)
 # Resurrect PM2 processes
 ~/.npm-global/bin/pm2 resurrect
 
-# Check for stopped or errored processes and restart them
-~/.npm-global/bin/pm2 list | grep -E 'stopped|errored' | awk '{print $2}' | while read id; do
+ # 检查停止或出错的进程并重新启动它们
+~/.npm-global/bin/pm2 jlist | jq -r '.[] | select(.pm2_env.status == "stopped" or .pm2_env.status == "errored") | .pm_id' | while read id; do
     ~/.npm-global/bin/pm2 restart $id
-done
+done 
 EOF
 )
 
