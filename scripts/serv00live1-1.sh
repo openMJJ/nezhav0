@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # 定义服务器和脚本信息
@@ -12,8 +11,6 @@ declare -A SERVERS=(
     ["server7"]="serv0004@s4.serv00.com"
     ["server8"]="serv501@s4.serv00.com"
     ["server9"]="open03@s4.serv00.com"
-    # 可以在这里添加更多服务器
-    # ["server2"]="user@server.com"
 )
 
 # SSH 登录密码
