@@ -8,10 +8,10 @@ declare -A SERVERS=(
     ["server4"]="serv0002@s4.serv00.com"
     ["server5"]="openmjj@s4.serv00.com"
     ["server6"]="serv502@s6.serv00.com"
-    ["server6"]="serv601@s6.serv00.com"
-    ["server7"]="serv0004@s4.serv00.com"
-    ["server8"]="serv501@s4.serv00.com"
-    ["server9"]="open03@s4.serv00.com"
+    ["server7"]="serv601@s6.serv00.com"
+    ["server8"]="serv0004@s4.serv00.com"
+    ["server9"]="serv501@s4.serv00.com"
+    ["server10"]="open03@s4.serv00.com"
 )
 
 # SSH 登录密码
