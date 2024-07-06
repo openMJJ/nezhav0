@@ -76,22 +76,22 @@ jobs:
             echo "Logging into $server"
 
             # 将 pm2_script 内容作为临时脚本传输到远程服务器并执行
-            sshpass -p "$PASSWORD" ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt "$server" <<SSH
-        cat > ~/pm2_temp_script.sh << 'EOF'
-        $PM2_SCRIPT
-        EOF
-        chmod +x ~/pm2_temp_script.sh
-        echo "Executing script on $server"
-        bash ~/pm2_temp_script.sh
-        if [ \$? -ne 0 ]; then
-            echo "Script execution failed on $server" >> execution_log.txt
-        else
-            echo "Script executed successfully on $server" >> execution_log.txt
-        fi
-        echo "Deleting temporary script on $server"
-        rm ~/pm2_temp_script.sh
-        exit
-        SSH
+            sshpass -p "$PASSWORD" ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt "$server" <<'SSH'
+            cat > ~/pm2_temp_script.sh << 'EOF'
+            $PM2_SCRIPT
+            EOF
+            chmod +x ~/pm2_temp_script.sh
+            echo "Executing script on $server"
+            bash ~/pm2_temp_script.sh
+            if [ $? -ne 0 ]; then
+                echo "Script execution failed on $server" >> execution_log.txt
+            else
+                echo "Script executed successfully on $server" >> execution_log.txt
+            fi
+            echo "Deleting temporary script on $server"
+            rm ~/pm2_temp_script.sh
+            exit
+            SSH
 
             # 检查执行结果
             if [ $? -ne 0 ]; then
