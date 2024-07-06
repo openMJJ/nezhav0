@@ -40,10 +40,8 @@ jobs:
             ["server14"]="serv605@s6.serv00.com"
             ["server15"]="serv606@s6.serv00.com"
         )
-
         # SSH 登录密码
         PASSWORD="Tss@19740522"
-
         # pm2_resurrect_and_restart.sh 脚本内容
         PM2_SCRIPT=$(cat <<'EOF'
 #!/bin/bash
