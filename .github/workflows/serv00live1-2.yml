@@ -22,7 +22,6 @@ jobs:
     - name: Execute PM2 Resurrection and Restart Script
       run: |
         #!/bin/bash
-
         # 定义服务器和脚本信息
         declare -A SERVERS=(
             ["server1"]="open02@s4.serv00.com"
