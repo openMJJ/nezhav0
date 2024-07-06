@@ -45,12 +45,8 @@ jobs:
         # SSH 登录密码
         PASSWORD="Tss@19740522"
 
-        # 遍历服务器并执行脚本
-        execute_script() {
-            local server=$1
-            echo "Logging into $server"
-
-            sshpass -p "$PASSWORD" ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt "$server" <<'SSH'
+        # pm2_resurrect_and_restart.sh 脚本内容
+        PM2_SCRIPT=$(cat <<'EOF'
 #!/bin/bash
 # 获取当前用户的 home 目录
 HOME_DIR=$(eval echo ~$USER)
@@ -69,8 +65,31 @@ done < pm2_ids.txt
 
 # 删除临时文件
 rm pm2_ids.txt
+EOF
+        )
+
+        # 遍历服务器并执行脚本
+        execute_script() {
+            local server=$1
+            echo "Logging into $server"
+
+            # 将 pm2_script 内容作为临时脚本传输到远程服务器并执行
+            sshpass -p "$PASSWORD" ssh -o ConnectTimeout=10 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -tt "$server" <<EOF
+cat > ~/pm2_temp_script.sh <<'SCRIPT'
+$PM2_SCRIPT
+SCRIPT
+chmod +x ~/pm2_temp_script.sh
+echo "Executing script on $server"
+bash ~/pm2_temp_script.sh
+if [ \$? -ne 0 ]; then
+    echo "Script execution failed on $server" >> execution_log.txt
+else
+    echo "Script executed successfully on $server" >> execution_log.txt
+fi
+echo "Deleting temporary script on $server"
+rm ~/pm2_temp_script.sh
 exit
-SSH
+EOF
 
             # 检查执行结果
             if [ $? -ne 0 ]; then
@@ -82,6 +101,7 @@ SSH
 
         export -f execute_script
         export PASSWORD
+        export PM2_SCRIPT
 
         # 使用 GNU Parallel 并行执行脚本
         parallel -j 5 execute_script ::: "${SERVERS[@]}"
