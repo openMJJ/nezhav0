@@ -1,0 +1,49 @@
+AvgPingCount: 2
+Cover: 0
+DDNS:
+  AccessID: ""
+  AccessSecret: ""
+  Enable: false
+  MaxRetries: 3
+  Profiles:
+    example:
+      AccessID: ""
+      AccessSecret: ""
+      Provider: ""
+      WebhookHeaders: ""
+      WebhookMethod: ""
+      WebhookRequestBody: ""
+      WebhookURL: ""
+  Provider: webhook
+  WebhookHeaders: ""
+  WebhookMethod: ""
+  WebhookRequestBody: ""
+  WebhookURL: ""
+Debug: false
+DisableSwitchTemplateInFrontend: false
+EnableIPChangeNotification: false
+EnablePlainIPInNotification: false
+GRPCHost: 128.204.223.94
+GRPCPort: 45555
+HTTPPort: 48008
+IPChangeNotificationTag: default
+IgnoredIPNotification: ""
+IgnoredIPNotificationServerIDs: {}
+Language: zh-CN
+Location: Asia/Shanghai
+MaxTCPPingValue: 1000
+Oauth2:
+  Admin: openmjj
+  ClientID: ff1a46d85f629316aeb6
+  ClientSecret: fb68901cff6f9d62ad83d1f48ce47871a4cb6def
+  Endpoint: ""
+  Type: github
+ProxyGRPCPort: 0
+Site:
+  Brand: 秋水长天SERV00
+  CookieName: nezha-dashboard
+  CustomCode: ""
+  DashboardTheme: default
+  Theme: mdui
+  ViewPassword: ""
+TLS: false
