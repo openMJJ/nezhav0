@@ -17,7 +17,7 @@ jobs:
     - name: Setup sshpass and GNU Parallel
       run: |
         sudo apt-get update
-        sudo apt-get install -y sshpass parallel
+        sudo apt-get install -y sshpass parallel jq
 
     - name: Execute PM2 Resurrection and Restart Script
       run: |
