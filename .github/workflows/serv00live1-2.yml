@@ -2,7 +2,7 @@ name: serv00live
 on:
   schedule:
     # Runs at the beginning of every hour
-    - cron: '0 * * * *'
+    - cron: '0 */3 * * *'
   workflow_dispatch:  # 支持手动触发
 
 jobs:
