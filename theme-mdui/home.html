@@ -66,34 +66,29 @@
 
     /* 背景图片 */
     body {
-      content: " " !important;
-      background: fixed !important;
-      z-index: -1 !important;
-      top: 0 !important;
-      right: 0 !important;
-      bottom: 0 !important;
-      left: 0 !important;
-      background-position: top !important;
-      background-repeat: no-repeat !important;
-      background-size: cover !important;
-      background-image: url(https://api.1314.cool/bingimg) !important;
-      font-family: Arial, Helvetica, sans-serif !important;
-    }
-
+    margin: 0; /* 清除默认的边距 */
+    padding: 0; /* 清除默认的内边距 */
+    height: 100%; /* 确保 body 高度为页面的 100% */
+    width: 100%; /* 确保 body 宽度为页面的 100% */
+    background: url(https://bingw.jasonzeng.dev/?index=random) no-repeat center center fixed; /* 背景图固定并居中 */
+    background-size: cover; /* 背景图覆盖整个页面 */
+    font-family: Arial, Helvetica, sans-serif !important;
+    z-index: -1 !important; /* 确保背景图在底层 */
+}
     /* 小卡片 */
     .mdui-card {
       width: 210px;
       height: 200px;
       transform: scale(0.8);
       border-radius: 10px !important;
-      background-color: #fafafaa3 !important;
+      background-color: #fafafa00 !important;
     }
     .mdui-col {
       opacity: 0.9;
     }
     .mdui-table {
       border-radius: 10px !important;
-      background-color: #fafafaa3 !important;
+      background-color: #fafafa73 !important;
     }
     /* 版权 */
     .ui.inverted.segment, .ui.primary.inverted.segment {
