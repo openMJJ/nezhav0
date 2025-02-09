@@ -50,3 +50,5 @@ curl -L https://raw.githubusercontent.com/nezhahq/scripts/v0/install.sh -o nezha
 * 互联网档案馆存档：[https://web.archive.org/web/20240929125721/https://nezha.wiki/guide/dashboard.html](https://web.archive.org/web/20240929125721/https://nezha.wiki/guide/dashboard.html)
 
 感谢 [nodeseek.com](https://www.nodeseek.com/post-209098-1) 老哥的整理。
+## 4.DOCKER容器agent
+https://github.com/openMJJ/nezha-agent
