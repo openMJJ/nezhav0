@@ -41,7 +41,8 @@ VERSION=17.5 bash <(curl -Ls https://raw.githubusercontent.com/eooce/scripts/mas
 ```bash
 bash <(curl -Ls https://raw.githubusercontent.com/eooce/scripts/master/agent.sh)
 ```
-```
+
+```bash
 wget  https://github.com/nezhahq/agent/releases/tag/v0.17.5
 ```
 
