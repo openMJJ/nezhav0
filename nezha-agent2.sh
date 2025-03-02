@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "========== Nezha 监控 Agent 安装脚本 =========="
+echo "========== Nezha 监控 Agent 安装/更新脚本 =========="
 
 # 交互式输入服务器 IP、端口、密钥
 read -p "请输入 Nezha 服务器 IP: " SERVER_IP
@@ -20,6 +20,11 @@ fi
 # 赋予执行权限
 chmod +x "$NEZHA_PATH"
 
+# 停止并禁用旧的 nezha-agent 服务（如果已运行）
+echo "🔄 停止旧的 Nezha Agent..."
+systemctl stop nezha-agent 2>/dev/null
+systemctl disable nezha-agent 2>/dev/null
+
 # 创建 systemd 服务
 SERVICE_FILE="/etc/systemd/system/nezha-agent.service"
 
@@ -30,7 +35,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=$NEZHA_PATH -s $SERVER_IP:$SERVER_PORT -p $CLIENT_SECRET
+ExecStart=$NEZHA_PATH -s $SERVER_IP:$SERVER_PORT -p $CLIENT_SECRET --disable-auto-update
 Restart=always
 User=root
 
@@ -42,6 +47,7 @@ EOF
 systemctl daemon-reload
 
 # 启动 Nezha Agent 并设置开机自启
+echo "🚀 启动新的 Nezha Agent..."
 systemctl start nezha-agent
 systemctl enable nezha-agent
 
@@ -49,4 +55,4 @@ systemctl enable nezha-agent
 echo "========== Nezha Agent 运行状态 =========="
 systemctl status nezha-agent --no-pager
 
-echo "✅ Nezha Agent 已成功安装并设置为开机自启！"
+echo "✅ Nezha Agent 已成功安装/更新，并设置为开机自启！"
