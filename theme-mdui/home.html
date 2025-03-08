@@ -88,7 +88,7 @@
     }
     .mdui-table {
       border-radius: 10px !important;
-      background-color: #fafafa73 !important;
+      background-color: #d6cacab2 !important;
     }
     /* 版权 */
     .ui.inverted.segment, .ui.primary.inverted.segment {
@@ -251,7 +251,8 @@
             <th class="mdui-text-center">CPU</th>
             <th class="mdui-text-center">RAM</th>
             <th class="mdui-text-center">硬盘</th>
-            <th class="mdui-text-center">系统</th>
+            <th class="mdui-text-center">操作系统</th>
+            <th class="mdui-text-center">公开备注</th>
           </tr>
         </thead>
         <tbody>
@@ -292,6 +293,7 @@
               </div>
             </td>
             <td class="mdui-text-center">@#server.Host.Platform#@</td>
+            <td class="mdui-text-center" v-text="getPublicNote(server)"></td>
           </tr>
         </tbody>
       </table>
@@ -320,6 +322,77 @@
       showCard: false
     },
     methods: {
+      getPublicNote(server) {
+    // 先从 LocalStorage 读取计算后的剩余天数
+    let savedNote = localStorage.getItem(`PublicNote_${server.ID}`);
+
+    // 如果 LocalStorage 有数据，直接返回
+    if (savedNote) {
+      return savedNote;
+    }
+
+    // 如果当前服务器有 PublicNote，就计算剩余天数，存入 LocalStorage，并返回
+    if (server.PublicNote) {
+      const remainingDays = this.calculateRemainingDays(server.PublicNote);
+      localStorage.setItem(`PublicNote_${server.ID}`, remainingDays);  // 存储计算后的剩余天数
+      return remainingDays;
+    }
+
+    // 默认返回无备注
+    return "无备注";
+  },
+
+  // 计算剩余天数的方法
+  calculateRemainingDays(dateString) {
+    // 打印调试信息，检查 PublicNote 日期
+    console.log(`获取到的 PublicNote 日期: ${dateString}`);
+
+    // 处理日期格式：如果传入的日期不是标准格式，则可能需要格式化
+    const formattedDate = this.formatDate(dateString);
+    console.log(`格式化后的日期: ${formattedDate}`);
+
+    const targetDate = new Date(formattedDate);  // 将 PublicNote 转换为 Date 对象
+
+    // 检查目标日期是否合法
+    if (isNaN(targetDate)) {
+      console.error(`Invalid date format: ${dateString}`);
+      return "无效的日期";
+    }
+
+    const currentDate = new Date(); // 获取当前日期
+    console.log(`当前日期: ${currentDate.toISOString()}`);  // 输出当前日期的 ISO 格式
+
+    // 计算时间差
+    const timeDiff = targetDate - currentDate;
+    const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)); // 将毫秒差转换为天数
+
+    // 输出调试信息，检查日期差值
+    console.log(`目标日期: ${targetDate.toISOString()}`);
+    console.log(`日期差 (毫秒): ${timeDiff}`);
+    console.log(`日期差 (天): ${daysDiff}`);
+
+    // 根据天数差返回不同的提示
+    if (daysDiff > 0) {
+      return `剩余 ${daysDiff} 天`;
+    } else if (daysDiff < 0) {
+      return `${-daysDiff} 天前`;
+    } else {
+      return '今天';
+    }
+  },
+
+  // 格式化日期为标准格式：YYYY-MM-DD
+  formatDate(dateString) {
+    const regex = /^(\d{4})-(\d{2})-(\d{2})$/;  // 检查是否为标准的 YYYY-MM-DD 格式
+    if (regex.test(dateString)) {
+      return dateString;  // 如果是标准格式，直接返回
+    } else {
+      // 你可以在这里做更多的日期格式化处理，具体依赖于你获取的日期格式
+      console.error(`日期格式不正确: ${dateString}`);
+      return '';  // 返回空字符串表示无效
+    }
+  },
+
       toggleView() {
         this.showCard = !this.showCard;
       },
