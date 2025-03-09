@@ -252,7 +252,7 @@
             <th class="mdui-text-center">RAM</th>
             <th class="mdui-text-center">硬盘</th>
             <th class="mdui-text-center">操作系统</th>
-            <th class="mdui-text-center">公开备注</th>
+            <th class="mdui-text-center">剩余DAY</th>
           </tr>
         </thead>
         <tbody>
@@ -313,6 +313,13 @@
   container.style.minHeight = window.innerHeight - document.body.clientHeight + container.clientHeight + 'px';
   mdui.mutation();
   const initData = JSON.parse('{{.Servers}}').servers;
+  MESSAGES = {
+  INVALID_DATE: '无效日期',
+  NO_NOTE: '无备注',
+  TODAY: '今天',
+  DAYS_LEFT: (days) => `${days} 天`,
+  DAYS_AGO: (days) => `-${days} 天前`
+              };
   var statusCards = new Vue({
     el: '#app',
     delimiters: ['@#', '#@'],
@@ -323,75 +330,61 @@
     },
     methods: {
       getPublicNote(server) {
-    // 先从 LocalStorage 读取计算后的剩余天数
-    let savedNote = localStorage.getItem(`PublicNote_${server.ID}`);
+  const { PublicNote: dateString } = server || {};
+  
+  // 参数有效性校验前置
+  if (!dateString || typeof dateString !== 'string') {
+    return MESSAGES.NO_NOTE;
+  }
 
-    // 如果 LocalStorage 有数据，直接返回
-    if (savedNote) {
-      return savedNote;
-    }
+  try {
+    const daysDiff = this.calculateDaysDifference(dateString);
+    return this.formatDaysMessage(daysDiff);
+  } catch (error) {
+    console.error('日期计算错误:', error.message);
+    return MESSAGES.INVALID_DATE;
+  }
+},
 
-    // 如果当前服务器有 PublicNote，就计算剩余天数，存入 LocalStorage，并返回
-    if (server.PublicNote) {
-      const remainingDays = this.calculateRemainingDays(server.PublicNote);
-      localStorage.setItem(`PublicNote_${server.ID}`, remainingDays);  // 存储计算后的剩余天数
-      return remainingDays;
-    }
+// 计算天数差（核心逻辑）
+calculateDaysDifference(dateString) {
+  const targetDate = this.parseDate(dateString);
+  const currentDate = new Date();
+  
+  // 时间差计算（毫秒）
+  const timeDiff = targetDate.getTime() - currentDate.getTime();
+  return Math.floor(timeDiff / (1000 * 3600 * 24));
+},
 
-    // 默认返回无备注
-    return "无备注";
-  },
+// 日期解析（带严格校验）
+parseDate(dateString) {
+  // 格式校验（YYYY-MM-DD）
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+    throw new Error('日期格式不正确');
+  }
 
-  // 计算剩余天数的方法
-  calculateRemainingDays(dateString) {
-    // 打印调试信息，检查 PublicNote 日期
-    console.log(`获取到的 PublicNote 日期: ${dateString}`);
+  // 构造日期对象
+  const [year, month, day] = dateString.split('-').map(Number);
+  const date = new Date(year, month - 1, day); // 注意月份从0开始
+  
+  // 有效性校验（防止类似 2023-02-30 的非法日期）
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() + 1 !== month ||
+    date.getDate() !== day
+  ) {
+    throw new Error('非法日期值');
+  }
 
-    // 处理日期格式：如果传入的日期不是标准格式，则可能需要格式化
-    const formattedDate = this.formatDate(dateString);
-    console.log(`格式化后的日期: ${formattedDate}`);
+  return date;
+},
 
-    const targetDate = new Date(formattedDate);  // 将 PublicNote 转换为 Date 对象
-
-    // 检查目标日期是否合法
-    if (isNaN(targetDate)) {
-      console.error(`Invalid date format: ${dateString}`);
-      return "无效的日期";
-    }
-
-    const currentDate = new Date(); // 获取当前日期
-    console.log(`当前日期: ${currentDate.toISOString()}`);  // 输出当前日期的 ISO 格式
-
-    // 计算时间差
-    const timeDiff = targetDate - currentDate;
-    const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24)); // 将毫秒差转换为天数
-
-    // 输出调试信息，检查日期差值
-    console.log(`目标日期: ${targetDate.toISOString()}`);
-    console.log(`日期差 (毫秒): ${timeDiff}`);
-    console.log(`日期差 (天): ${daysDiff}`);
-
-    // 根据天数差返回不同的提示
-    if (daysDiff > 0) {
-      return `剩余 ${daysDiff} 天`;
-    } else if (daysDiff < 0) {
-      return `${-daysDiff} 天前`;
-    } else {
-      return '今天';
-    }
-  },
-
-  // 格式化日期为标准格式：YYYY-MM-DD
-  formatDate(dateString) {
-    const regex = /^(\d{4})-(\d{2})-(\d{2})$/;  // 检查是否为标准的 YYYY-MM-DD 格式
-    if (regex.test(dateString)) {
-      return dateString;  // 如果是标准格式，直接返回
-    } else {
-      // 你可以在这里做更多的日期格式化处理，具体依赖于你获取的日期格式
-      console.error(`日期格式不正确: ${dateString}`);
-      return '';  // 返回空字符串表示无效
-    }
-  },
+// 格式化输出
+formatDaysMessage(daysDiff) {
+  if (daysDiff > 0) return MESSAGES.DAYS_LEFT(daysDiff);
+  if (daysDiff < 0) return MESSAGES.DAYS_AGO(Math.abs(daysDiff));
+  return MESSAGES.TODAY;
+},
 
       toggleView() {
         this.showCard = !this.showCard;
@@ -503,7 +496,10 @@
     var infoTooltip = {}, memTooltip = {};
     ws.onmessage = function (evt) {
       const data = JSON.parse(evt.data);
-      statusCards.servers = data.servers;
+      statusCards.servers = data.servers.map(newServer => {
+    const oldServer = statusCards.servers.find(s => s.ID === newServer.ID);
+    return { ...oldServer, ...newServer }; // 保留旧字段，覆盖更新字段
+  });
       for (let i = 0; i < statusCards.servers.length; i++) {
         const ns = statusCards.servers[i];
         if (!ns.Host) ns.live = false;
