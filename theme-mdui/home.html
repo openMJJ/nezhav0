@@ -410,7 +410,7 @@ formatDaysMessage(daysDiff) {
         const i = Math.floor(Math.log(bytes) / Math.log(1024));
         let result;
         if (i >= 4) {
-          result = (bytes / Math.pow(1024, i)).toFixed(1);
+          result = (bytes / Math.pow(1024, i)).toFixed(2);
         } else {
           result = Math.floor(bytes / Math.pow(1024, i));
         }
