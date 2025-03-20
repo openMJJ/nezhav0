@@ -67,6 +67,7 @@ nezha-agent --version
 ```
 
 或查看面板界面的版本信息以确认是否成功降级。
-```
 
-将以上内容复制到 `README.md` 文件中即可，GitHub 上会正确渲染格式。如果需要调整样式或增加内容，随时告诉我！
+```bash
+https://nzz.openface.cc/
+```
