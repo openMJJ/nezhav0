@@ -9,13 +9,13 @@
   <link rel="shortcut icon" type="image/png" href="/static/logo.svg?v20210804" />
 
   <!-- MDUI CSS -->
-  <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/semantic-ui/2.4.1/semantic.min.css">
-  <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" type="text/css" href="/static/semantic-ui-alerts.min.css">
   <link rel="stylesheet" href="/static/theme-hotaru/css/core.css?v202012121912" type="text/css">
   <link rel="stylesheet" href="/static/theme-hotaru/css/main.css?v202101171153" type="text/css">
   <link rel="stylesheet" href="/static/theme-hotaru/css/darkmode.css?v202103021121" type="text/css">
-  <link rel="stylesheet" href="https://cdn.staticfile.org/mdui/1.0.2/css/mdui.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdui/1.0.2/css/mdui.min.css"/>
   <link rel="stylesheet" href="/static/theme-mdui/mdui.css" type="text/css">
   
   <style>
@@ -201,7 +201,7 @@
         <div class="mdui-col card-container card" v-for="server in servers" :id="server.ID">
           <div :class="'mdui-card mt card' + (server.live ? '' : ' offline')">
             <div class="mdui-card-header">
-              <img class="mdui-card-header-avatar" :src="'https://cdn.staticfile.org/flag-icon-css/4.1.5/flags/1x1/' + (server.Host.CountryCode ? server.Host.CountryCode : 'cn') + '.svg'" />
+              <img class="mdui-card-header-avatar" :src="'https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/4.1.5/flags/1x1/' + (server.Host.CountryCode ? server.Host.CountryCode : 'cn') + '.svg'" />
               <div class="mdui-card-header-title">@#server.Name#@</div>
               <div class="mdui-card-header-subtitle">@#server.Host.CountryCode.toUpperCase()#@ | @#server.Host.Platform#@ @#server.Host.PlatformVersion#@</div>
             </div>
@@ -410,7 +410,7 @@ formatDaysMessage(daysDiff) {
         const i = Math.floor(Math.log(bytes) / Math.log(1024));
         let result;
         if (i >= 4) {
-          result = (bytes / Math.pow(1024, i)).toFixed(2);
+          result = (bytes / Math.pow(1024, i)).toFixed(1);
         } else {
           result = Math.floor(bytes / Math.pow(1024, i));
         }
